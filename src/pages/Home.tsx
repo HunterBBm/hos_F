@@ -56,7 +56,7 @@ export default function Home() {
   </>
   )}
    {/* ถ้า role คือ admin แสดงปุ่ม "จัดการบุคลากร" */}
-  {getRoleName(user?.tb_user_role) === 'admin' && (
+  {getRoleName(user?.tb_user_role) === 'admin' &&  (
     <button className="w-full text-left px-4 py-2 mt-4 bg-white text-black rounded hover:bg-gray-200">
       จัดการบุคลากร
     </button>
