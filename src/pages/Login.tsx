@@ -40,9 +40,9 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-purple-800 via-violet-700 to-pink-600  px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        <h2 className="text-3xl font-bold text-center text-gray-80 mb-8">
           Sign in
         </h2>
         {error && <p className="text-red-600 mb-4">{error}</p>}
