@@ -49,7 +49,7 @@ export default function Home() {
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? 'max-h-40 mt-2' : 'max-h-0'}`}
       >
-        <button className="w-full text-left px-4 py-2 mt-1 bg-white text-black rounded hover:bg-gray-200">
+        <button className="w-full text-left px-4 py-2 mt-1 text-white rounded hover:bg-violet-700">
           ตารางเงินเดือน
         </button>
       </div>
@@ -57,9 +57,75 @@ export default function Home() {
   )}
    {/* ถ้า role คือ admin แสดงปุ่ม "จัดการบุคลากร" */}
   {getRoleName(user?.tb_user_role) === 'admin' &&  (
-    <button className="w-full text-left px-4 py-2 mt-4 bg-white text-black rounded hover:bg-gray-200">
-      จัดการบุคลากร
-    </button>
+    <>
+ <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full text-left"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+            </svg>
+            <span className="text-base">จัดการบุคลากร</span>
+          </div>
+          <svg
+            className={`w-6 h-6 transform transition-transform duration-300 ml-20 ${open ? 'rotate-180' : ''}`}
+            fill="none"
+            viewBox="0 0 14 8"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1" />
+          </svg>
+        </div>
+      </button>
+
+      {/* ปุ่มย่อย แสดงเมื่อเปิด */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? 'max-h-40 mt-2' : 'max-h-0'}`}
+      >
+        <button className="w-full text-left px-4 py-2 mt-1 text-white rounded hover:bg-violet-700">
+          เพิ่มบุคลากร
+        </button>
+      </div>
+  </>
+  )}
+  {/* ถ้า role คือ superadmin แสดงปุ่ม "จัดการบุคลากร" */}
+  {getRoleName(user?.tb_user_role) === 'superadmin' &&  (
+    <>
+ <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full text-left"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+            </svg>
+            <span className="text-base">จัดการบุคลากร</span>
+          </div>
+          <svg
+            className={`w-6 h-6 transform transition-transform duration-300 ml-20 ${open ? 'rotate-180' : ''}`}
+            fill="none"
+            viewBox="0 0 14 8"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1" />
+          </svg>
+        </div>
+      </button>
+
+      {/* ปุ่มย่อย แสดงเมื่อเปิด */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? 'max-h-40 mt-2' : 'max-h-0'}`}
+      >
+        <button className="w-full text-left px-4 py-2 mt-1 text-white rounded hover:bg-violet-700">
+          เพิ่มบุคลากร
+        </button>
+      </div>
+  </>
   )}
       
   </div>
