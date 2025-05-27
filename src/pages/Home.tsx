@@ -191,7 +191,7 @@ export default function Home() {
     </div>
   )}
     {/* ตารางแสดงข้อมูลบุคลากร */}
-    {showEmployees && !showAddEmployee && (     //Show Users
+    {showEmployees && !showAddEmployee && (
       <div className="mt-10 w-full">
         <h2 className="text-2xl font-bold mb-4">รายชื่อบุคลากร</h2>
         <div className="overflow-x-auto">
@@ -202,6 +202,7 @@ export default function Home() {
                 <th className="px-4 py-2 border">นามสกุล</th>
                 <th className="px-4 py-2 border">ตำแหน่ง</th>
                 <th className="px-4 py-2 border">แผนก</th>
+                <th className="px-4 py-2 border">จัดการ</th>
               </tr>
             </thead>
             <tbody>
@@ -211,6 +212,17 @@ export default function Home() {
                   <td className="px-4 py-2 border">{emp.tb_lastname || '-'}</td>
                   <td className="px-4 py-2 border">{emp.tb_position || '-'}</td>
                   <td className="px-4 py-2 border">{emp.tb_department || '-'}</td>
+                  <td className="px-4 py-2 border">
+                    <button 
+                      onClick={() => {
+                        // TODO: เพิ่ม logic แก้ไขข้อมูล
+                        alert('กำลังพัฒนา...');
+                      }}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                    >
+                      แก้ไข
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
