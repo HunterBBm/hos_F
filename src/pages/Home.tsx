@@ -1,14 +1,46 @@
 import React, { useState } from 'react';
 import api from '../routes/api';
 
+interface UserData {
+  id?: number;
+  tb_email: string;
+  tb_password: string;
+  tb_firstname: string;
+  tb_lastname: string;
+  tb_national_id: string;
+  tb_bank_account_number: string;
+  tb_bank_name: string;
+  tb_job_group: string;
+  tb_department: string;
+  tb_division: string;
+  tb_position: string;
+  tb_level: string;
+  tb_personnel_type: string;
+}
+
 export default function Home() {
   type Role = 1 | 2 | 3 | string;
 
   const [open, setOpen] = useState(false);
-  const [employees, setEmployees] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<UserData[]>([]);
   const [showEmployees, setShowEmployees] = useState(false);
   const [showAddEmployee, setShowAddEmployee] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserData | null>(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  // ฟังก์ชันสำหรับดึงข้อมูลผู้ใช้ที่ต้องการแก้ไข
+  const handleEdit = (userId: number) => {
+    // หาข้อมูลผู้ใช้จาก employees state ที่มีอยู่แล้ว
+    const userToEdit = employees.find(emp => emp.id === userId);
+    if (userToEdit) {
+      setEditingUser(userToEdit);
+      setShowEditForm(true);
+      setShowEmployees(false);
+      setShowAddEmployee(false);
+    } else {
+      alert('ไม่พบข้อมูลผู้ใช้');
+    }
+  };
 
   // ตรวจสอบสิทธิ์ user
   const getRoleName = (role: Role): string => {
@@ -95,6 +127,7 @@ export default function Home() {
           onClick={() => {
             setShowAddEmployee(true);
             setShowEmployees(false);
+            setShowEditForm(false);
           }}
         >
           เพิ่มบุคลากร
@@ -138,6 +171,7 @@ export default function Home() {
             // เมื่อคลิก "แสดงบุคลากร" ให้ปิดฟอร์มเพิ่มบุคลากร (ถ้าเปิดอยู่) และซ่อนโปรไฟล์ทันที
             setShowAddEmployee(false);
             setShowEmployees(true); // ซ่อนโปรไฟล์ก่อน fetch
+            setShowEditForm(false);
             try {
               const res = await api.get('/show');
               const data = Array.isArray(res.data.users) ? res.data.users : [];
@@ -171,8 +205,7 @@ export default function Home() {
     <h1 className="text-4xl font-semibold text-black mb-8">
       {getRoleName(user?.tb_user_role)}
     </h1>
-
- {!showEmployees && !showAddEmployee && (
+ {!showEmployees && !showAddEmployee && !showEditForm && (
     <div className="flex flex-col items-start ml-10">
       {/* Profile image */}
       <img
@@ -198,6 +231,7 @@ export default function Home() {
           <table className="min-w-full bg-white border border-gray-300">
             <thead>
               <tr>
+                <th className="px-4 py-2 border">ลำดับ</th>
                 <th className="px-4 py-2 border">ชื่อ</th>
                 <th className="px-4 py-2 border">นามสกุล</th>
                 <th className="px-4 py-2 border">ตำแหน่ง</th>
@@ -205,20 +239,18 @@ export default function Home() {
                 <th className="px-4 py-2 border">จัดการ</th>
               </tr>
             </thead>
-            <tbody>
-              {employees.map((emp, idx) => (
+            <tbody>              
+              {employees.map((emp, idx) => (                
                 <tr key={idx}>
+                  <td className="px-4 py-2 border">{idx + 1}</td>
                   <td className="px-4 py-2 border">{emp.tb_firstname || '-'}</td>
                   <td className="px-4 py-2 border">{emp.tb_lastname || '-'}</td>
                   <td className="px-4 py-2 border">{emp.tb_position || '-'}</td>
                   <td className="px-4 py-2 border">{emp.tb_department || '-'}</td>
-                  <td className="px-4 py-2 border">
-                    <button 
-                      onClick={() => {
-                        // TODO: เพิ่ม logic แก้ไขข้อมูล
-                        alert('กำลังพัฒนา...');
-                      }}
+                  <td className="px-4 py-2 border">                    <button 
+                      onClick={() => emp.id && handleEdit(emp.id)}
                       className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                      disabled={!emp.id}
                     >
                       แก้ไข
                     </button>
@@ -230,7 +262,7 @@ export default function Home() {
         </div>
       </div>
     )}
-    {showAddEmployee && (               //Register
+    {!showEmployees && showAddEmployee && (               //Register
       <div className="mt-10 w-full">
         <h2 className="text-2xl font-bold mb-4">เพิ่มบุคลากร</h2>
         {/* ฟอร์มลงทะเบียนบุคลากรใหม่ */}
@@ -352,6 +384,198 @@ export default function Home() {
           <div className="flex gap-2 mt-6">
             <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">บันทึก</button>
             <button type="button" className="bg-gray-400 text-white px-6 py-2 rounded hover:bg-gray-500" onClick={() => setShowAddEmployee(false)}>ยกเลิก</button>
+          </div>
+        </form>
+      </div>
+    )}
+    {/* ฟอร์มแก้ไขข้อมูลบุคลากร */}
+    {showEditForm && editingUser && (
+      <div className="mt-10 w-full">
+        <h2 className="text-2xl font-bold mb-4">แก้ไขข้อมูลบุคลากร</h2>
+        <form
+          className="space-y-4 max-w-lg"
+          onSubmit={async e => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const formData = new FormData(form);
+            const payload = {
+              firstname: formData.get('firstname'),
+              lastname: formData.get('lastname'),
+              email: formData.get('email'),
+              password: formData.get('password'),
+              national_id: formData.get('national_id'),
+              bank_account_number: formData.get('bank_account_number'),
+              bank_name: formData.get('bank_name'),
+              job_group: formData.get('job_group'),
+              department: formData.get('department'),
+              division: formData.get('division'),
+              position: formData.get('position'),
+              level: formData.get('level'),
+              personnel_type: formData.get('personnel_type'),
+            };            try {              
+              // รอให้การอัพเดตข้อมูลเสร็จสมบูรณ์
+              const updateResponse = await api.put(`/users/${editingUser.id}`, payload);
+              
+              if (updateResponse.status === 200) {
+                // รอให้การดึงข้อมูลใหม่เสร็จสมบูรณ์
+                const res = await api.get('/show');
+                const data = Array.isArray(res.data.users) ? res.data.users : [];
+                
+                // อัพเดต state ทั้งหมดหลังจากได้ข้อมูลใหม่
+                setEmployees(data);
+                setShowEditForm(true);
+                setEditingUser(null);
+                setShowEmployees(true);
+                
+                // แจ้งเตือนสำเร็จ
+                alert('แก้ไขข้อมูลสำเร็จ');
+              } else {
+                throw new Error('การอัพเดตข้อมูลไม่สำเร็จ');
+              }
+            } catch (err: any) {
+              let msg = err?.response?.data?.message || 
+                       err?.response?.data?.error || 
+                       err?.message || 
+                       'เกิดข้อผิดพลาดในการแก้ไขข้อมูล';
+              alert(msg);
+            }
+          }}
+        >
+          <div>
+            <label className="block mb-1 font-medium">Email</label>
+            <input 
+              type="text" 
+              name="email" 
+              defaultValue={editingUser.tb_email} 
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">ชื่อ</label>
+            <input 
+              type="text" 
+              name="firstname" 
+              defaultValue={editingUser.tb_firstname}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">นามสกุล</label>
+            <input 
+              type="text" 
+              name="lastname" 
+              defaultValue={editingUser.tb_lastname}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">เลขบัตรประชาชน</label>
+            <input 
+              type="text" 
+              name="national_id" 
+              defaultValue={editingUser.tb_national_id}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">เลขบัญชี</label>
+            <input 
+              type="text" 
+              name="bank_account_number" 
+              defaultValue={editingUser.tb_bank_account_number}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">ธนาคาร</label>
+            <input 
+              type="text" 
+              name="bank_name" 
+              defaultValue={editingUser.tb_bank_name}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">กลุ่มงาน</label>
+            <input 
+              type="text" 
+              name="job_group" 
+              defaultValue={editingUser.tb_job_group}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">ฝ่าย/แผนก</label>
+            <input 
+              type="text" 
+              name="department" 
+              defaultValue={editingUser.tb_department}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">หน่วยงาน</label>
+            <input 
+              type="text" 
+              name="division" 
+              defaultValue={editingUser.tb_division}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">ตำแหน่ง</label>
+            <input 
+              type="text" 
+              name="position" 
+              defaultValue={editingUser.tb_position}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">ระดับ</label>
+            <input 
+              type="text" 
+              name="level" 
+              defaultValue={editingUser.tb_level}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">ประเภทบุคลากร</label>
+            <input 
+              type="text" 
+              name="personnel_type" 
+              defaultValue={editingUser.tb_personnel_type}
+              className="w-full border rounded px-3 py-2" 
+              required 
+            />
+          </div>
+          <div className="flex gap-2 mt-6">
+            <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+              บันทึก
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowEditForm(false);
+                setEditingUser(null);
+                setShowEmployees(true);
+              }}
+              className="bg-gray-400 text-white px-6 py-2 rounded hover:bg-gray-500"
+            >
+              ยกเลิก
+            </button>
           </div>
         </form>
       </div>
