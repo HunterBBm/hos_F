@@ -42,6 +42,26 @@ export default function Home() {
     }
   };
 
+  const handleDelete = async (userId: number) => {
+    if (window.confirm('คุณต้องการลบบุคลากรนี้หรือไม่?')) {  
+      try {
+        await api.delete(`/users/${userId}`);
+        alert('ลบบุคลากรสำเร็จ');
+        // อัปเดตรายชื่อบุคลากรทันที
+        const res = await api.get('/show');
+        const data = Array.isArray(res.data.users) ? res.data.users : [];
+        setEmployees(data);
+      } catch (err: any) {
+        let msg =
+          err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          err?.message ||
+          'เกิดข้อผิดพลาดในการลบบุคลากร';
+        alert(msg);
+      }
+    }
+  }
+
   // ตรวจสอบสิทธิ์ user
   const getRoleName = (role: Role): string => {
   return {
@@ -247,13 +267,23 @@ export default function Home() {
                   <td className="px-4 py-2 border">{emp.tb_lastname || '-'}</td>
                   <td className="px-4 py-2 border">{emp.tb_position || '-'}</td>
                   <td className="px-4 py-2 border">{emp.tb_department || '-'}</td>
-                  <td className="px-4 py-2 border">                    <button 
+                  <td className="px-4 py-2 border">                    
+                    <button 
                       onClick={() => emp.id && handleEdit(emp.id)}
                       className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
                       disabled={!emp.id}
                     >
                       แก้ไข
                     </button>
+                    {getRoleName(user?.tb_user_role) === 'superadmin' &&  (
+                    <button 
+                      onClick={() => emp.id && handleDelete(emp.id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 ml-2"
+                      disabled={!emp.id}
+                    >
+                      ลบ
+                    </button>
+                    )}
                   </td>
                 </tr>
               ))}
