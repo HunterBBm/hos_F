@@ -2,8 +2,9 @@
   "name": "tailwind-vite-starter",
   "private": true,
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5173",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -18,9 +19,9 @@
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.21",
-    "tailwindcss": "^3.3.2",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.3",
     "typescript": "^5.0.4",
-    "vite": "^4.3.9"
+    "vite": "^4.4.0"
   }
 }

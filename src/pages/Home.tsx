@@ -407,9 +407,17 @@ export default function Home() {
             <label className="block mb-1 font-medium">ระดับ </label>
             <input type="text" name="level" className="w-full border rounded px-3 py-2" required />
           </div>
-          <div>
-            <label className="block mb-1 font-medium">ประเภทบุคคลากร </label>
-            <input type="text" name="personnel_type" className="w-full border rounded px-3 py-2" required />
+          <div>            <label className="block mb-1 font-medium">ประเภทบุคคลากร </label>
+            <select 
+              name="personnel_type" 
+              className="w-full border rounded px-3 py-2 bg-white" 
+              required
+            >
+              <option value="">-- เลือกประเภทบุคลากร --</option>
+              <option value="0">ลูกจ้างรายวัน</option>
+              <option value="1">ข้าราชการ</option>
+              <option value="2">กระทรวง</option>
+            </select>
           </div>
           <div className="flex gap-2 mt-6">
             <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">บันทึก</button>
@@ -581,15 +589,18 @@ export default function Home() {
               required 
             />
           </div>
-          <div>
-            <label className="block mb-1 font-medium">ประเภทบุคลากร</label>
-            <input 
-              type="text" 
+          <div>            <label className="block mb-1 font-medium">ประเภทบุคลากร</label>
+            <select 
               name="personnel_type" 
               defaultValue={editingUser.tb_personnel_type}
-              className="w-full border rounded px-3 py-2" 
-              required 
-            />
+              className="w-full border rounded px-3 py-2 bg-white" 
+              required
+            >
+              <option value="">-- เลือกประเภทบุคลากร --</option>
+              <option value="0">ลูกจ้างรายวัน</option>
+              <option value="1">ข้าราชการ</option>
+              <option value="2">กระทรวง</option>
+            </select>
           </div>
           <div className="flex gap-2 mt-6">
             <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
